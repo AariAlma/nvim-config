@@ -19,3 +19,5 @@ vim.wo.relativenumber = true
 vim.opt.virtualedit = "block"
 vim.opt.ignorecase = true
 vim.opt.termguicolors = true
+
+vim.diagnostic.config({ virtual_text = true })
