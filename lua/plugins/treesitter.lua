@@ -1,14 +1,47 @@
 return {
-	"nvim-treesitter/nvim-treesitter",
-	branch = 'master',
-	lazy = false,
-	build = ":TSUpdate",
-	config = function()
-		local builtin = require('telescope.builtin')
-		vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
-		vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
-		vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
-		vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
-	end
-
+	{
+		"nvim-treesitter/nvim-treesitter",
+		lazy = false,
+		priority = 1000,
+		build = ":TSUpdate",
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter-textobjects",
+		},
+		opts = {
+			ensure_installed = { "c", "lua", "vim", "vimdoc", "markdown", "query" },
+			auto_install = true,
+			highlight = { enable = true, additional_vim_regex_highlighting = false }, -- fix "hifhlight" typo
+			incremental_selection = {
+				enable = true,
+				keymaps = {
+					init_selection = "<leader>ss",
+					node_incremental = "<leader>si",
+					scope_incremental = "<leader>sc",
+					node_decremental = "<leader>sd",
+				},
+			},
+			textobjects = {
+				select = {
+					enable = true,
+					lookahead = true,
+					keymaps = {
+						["af"] = "@function.outer",
+						["if"] = "@function.inner",
+						["ac"] = "@class.outer",
+						["ic"] = { query = "@class.inner", desc = "Inner class" },
+						["as"] = { query = "@local.scope", query_group = "locals", desc = "Language scope" },
+					},
+					selection_modes = {
+						["@parameter.outer"] = "v",
+						["@function.outer"] = "V",
+						["@class.outer"] = "<c-v>",
+					},
+					include_surrounding_whitespace = true,
+				},
+			},
+		},
+		config = function(_, opts)
+			require("nvim-treesitter.configs").setup(opts)
+		end,
+	},
 }
